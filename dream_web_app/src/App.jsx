@@ -1,15 +1,20 @@
 import { useState } from 'react'
 import './App.css'
-import SkillsList from './SkillsList'
+import image1 from './assets/images (1).jpeg';
+import './index.css';
+import SidePanel from './SidePanel';
+import Logos from './Logos';
 
 function App() {
 
   return (
-    <>
+    <div>
+      <div className='homepage-container'></div>
       <div>
-        <SkillsList/>
-      </div>
-    </>
+        <SidePanel/>
+        <Logos/>
+      </div> 
+    </div>
   )
 }
 

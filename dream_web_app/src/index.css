@@ -1,68 +1,95 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.homepage-container {
+  background-image: url('./assets/images (1).jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 80vh;
+  width: 100%;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  position: absolute;
+  top: 0%;
+  left: 0;
+}
+.side-panel {
+  width: 200px;
+  height: 100%;
+  background-color: aliceblue;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: left 0.3s ease;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+.side-panel.open {
+  left: -300px;
 }
 
-body {
+.menu-items {
+  padding: 20px;
+}
+
+.menu-items ul {
+  list-style: none;
+  padding: 0;
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.menu-items ul li {
+  padding: 40px 0;
+  color: blue;
+  font-size: 1.9em;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.toggle-button {
+  position: absolute;
+  left: 7px;
+  top: 0;
+  padding: 8px 16px;
+  background-color: purple;
+  color: white;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  z-index: 1;
+  font-size: 1.4em;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.toggle-button:hover {
+  background-color: #0056b3;
 }
+
+.logos-container {
+  display: flex;
+  justify-content: space-between; /* Space logos evenly */
+  align-items: center;
+  position: absolute;
+  bottom: 10px; /* Adjust the distance from the bottom */
+  left: 50%; /* Center the logos horizontally */
+  transform: translateX(-50%); /* Center the logos horizontally */
+  width: 77%; /* Adjust the width of the container */
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  height: 77%; /* Adjust the height of the logos */
+}
+
+.logo {
+  width: 30px; /* Adjust the width of the logos */
+  height: auto; /* Let the height adjust proportionally */
+  margin-right: 10px; /* Adjust the spacing between logo and text */
+}
+
+.logo-text {
+  font-size: 14px; /* Adjust the font size of the text */
+  color: #333; /* Adjust the color of the text */
+}
+
+.separator {
+  margin: 0 5px; /* Adjust the margin between separators */
+}
+
