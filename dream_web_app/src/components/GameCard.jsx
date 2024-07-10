@@ -1,23 +1,22 @@
+import './components.css'
 
-function GameCard(props) {
-    const {stake} = props
+function GameCard({stake, selectGameCard}) {
 
     return (
-        <div className="gc__gamecard-container" >
-            <div className="gc__gamecard-title" >
-                <h2>Game amount{stake}</h2>
-                <div className="gc__gamecard-list" >
-                    <p>Searchh for friend?</p>
-                    <p>Waiting list</p>
-                    <p>Waiting list</p>
-                    <p>Waiting list</p>
-                    <p>Waiting list</p>
-                </div>
+        <div className='gc__gameCard-container' >
+            <div className='gc__gameCard-loadingStatue'>
+                <h2>Game amount {stake}</h2>
+                <p>Pairing with opponent...</p><br />
+                <button onClick={selectGameCard}>Pay</button>
             </div>
-            {/* if no player remain pairing. if opponent.. pair then auto redirect to game */}
-            <p>Pairing with opponent...</p><br />
-            <button >Pay</button>
-        </div>
+            <div className='gc__gameCard-waitingList' >
+                <p>Searchh for friend?</p>
+                <p>Waiting list</p>
+                <p>Waiting list</p>
+                <p>Waiting list</p>
+                <p>Waiting list</p>
+            </div>
+        </div>          
     );
 }
 

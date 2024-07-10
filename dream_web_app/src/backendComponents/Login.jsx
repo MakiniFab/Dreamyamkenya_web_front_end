@@ -23,10 +23,8 @@ function Login({showSignup}) {
             });
             const responseData = await response.json();
             if (response.ok) {
-                localStorage.setItem('token', responseData.token)
+                localStorage.setItem('token', responseData)
                 navigate('/profile')
-                console.log("Login succesful!")
-                console.log("token:",  responseData)
             } else {
                 console.error('Login failed:', responseData.msg)
             }

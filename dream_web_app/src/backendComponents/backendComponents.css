@@ -1,5 +1,13 @@
-.gc__profile-div {
+.gc__profile-container-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
+.gc__profile-game-buttons  {
+    /* border: solid 2px;
+    display: grid;
+    height: 350px; */
+}
+
+

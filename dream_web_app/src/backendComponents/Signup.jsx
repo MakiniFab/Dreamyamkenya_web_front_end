@@ -24,8 +24,6 @@ function Signup(){
           body: JSON.stringify(data)
         });
         const info = await response.json();
-        console.log("sign up successfull!")
-        console.log(info)
         navigate('/profile')
         
       }
