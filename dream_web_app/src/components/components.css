@@ -1,0 +1,17 @@
+.gc__main-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gc__gamecard-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.gc__gamecard-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    flex-direction: column;
+}

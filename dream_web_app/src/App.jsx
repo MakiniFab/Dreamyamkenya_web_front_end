@@ -1,21 +1,35 @@
-import { useState } from 'react'
-import './App.css'
-import image1 from './assets/images (1).jpeg';
-import './index.css';
-import SidePanel from './SidePanel';
-import Logos from './Logos';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import UserProfile from './backendComponents/UserProfile';
+import HomeBody from "./components/HomeBody";
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  return (
-    <div>
-      <div className='homepage-container'></div>
-      <div>
-        <SidePanel/>
-        <Logos/>
-      </div> 
-    </div>
-  )
+  function fetchCurrentUser() {
+    const token = localStorage.getItem('token')
+    fetch('http://127.0.0.1:5000/current_user', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      })
+      .then((response) => response.json())
+      .then((user) => setUser(user))
+      .then((loading) => setLoading(loading));
+
+  }
+   
+    return (
+        <div>
+            <Routes>
+                <Route path="/" element={<HomeBody />} />
+                <Route path="/profile" element={<UserProfile user={user} loading={loading} fetchCurrentUser={fetchCurrentUser} />} />
+            </Routes>
+        </div>
+    );
 }
 
-export default App
+export default App;

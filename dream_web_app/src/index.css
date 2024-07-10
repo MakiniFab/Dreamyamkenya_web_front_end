@@ -93,3 +93,8 @@
   margin: 0 5px; /* Adjust the margin between separators */
 }
 
+.expertiseBtn {
+  background-color: black;
+  background: blue;
+  position: absolute;
+}
