@@ -6,7 +6,7 @@ import GameCard from '../components/GameCard';
 
 const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
   const [mpesaVisible, setMpesaVisible] = useState(false);
-  const [gameCardVisible, setGameCardVisible] = useState(false);
+  const [visibleGameCard, setVisibleGameCard] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,8 +17,13 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
     setMpesaVisible(!mpesaVisible);
   }
 
-  function selectGameCard() {
-    setGameCardVisible(!gameCardVisible)
+  function selectGameCard(stake) {
+    if (visibleGameCard === stake) {
+      setVisibleGameCard(null)
+    } else {
+      setVisibleGameCard(stake)
+    }
+
   }
 
   return (
@@ -52,11 +57,15 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
         </div>
       </div>
       <div className='gc__profile-game-buttons'>
-        <div>
-          {gameCardVisible ? <GameCard selectGameCard={selectGameCard} stake={50} /> :
-           <button onClick={selectGameCard} >game 50</button>}
-        </div>
-        
+        {visibleGameCard === null ? (
+          [20, 50, 100, 200, 300, 500, 1000].map(stake => (
+            <div key={stake} >
+              <button onClick={() => selectGameCard(stake)} >Game {stake}</button>
+            </div>
+          ))
+        ) : (
+          <GameCard user={user} selectGameCard={() => selectGameCard(visibleGameCard)} stake={visibleGameCard} />
+        )}
       </div>
     </div>
   );
