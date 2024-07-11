@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import Mpesa from './Mpesa';
 import './backendComponents.css';
 import GameCard from '../components/GameCard';
@@ -7,8 +7,7 @@ import GameCard from '../components/GameCard';
 const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
   const [mpesaVisible, setMpesaVisible] = useState(false);
   const [visibleGameCard, setVisibleGameCard] = useState(null);
-  const navigate = useNavigate();
-
+  
   useEffect(() => {
     fetchCurrentUser();
   }, []);
@@ -22,8 +21,34 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
       setVisibleGameCard(null)
     } else {
       setVisibleGameCard(stake)
+      updateStatus("online")
     }
 
+  }
+
+  const updateStatus = async (status) => {
+    const token = localStorage.getItem('token');
+    if (!token || token.split('.').length !== 3) {
+      setError('Invalid token');
+      return;
+    }
+    if (!user || !user.id) {
+      console.error("User id not available")
+      return
+    }
+
+    try {
+      await fetch(`http://localhost:5000/status/${user.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({status})
+      })
+    } catch (error) {
+      console.error("Error:", error)
+    }
   }
 
   return (
