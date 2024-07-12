@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useState} from 'react';
+import { BrowserRouter as  Router, Routes, Route } from 'react-router-dom';
 import UserProfile from './backendComponents/UserProfile';
 import HomeBody from "./components/HomeBody";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -25,11 +25,8 @@ function App() {
       },
     })
       .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        setUser(data);
+      .then(currentUser => {
+        setCurrentUser(currentUser);
         setLoading(false);
       })
       .catch(err => {
@@ -44,7 +41,7 @@ function App() {
           <Route path="/" element={<HomeBody />} />
           <Route 
             path="/profile" 
-            element={<UserProfile user={user} loading={loading} fetchCurrentUser={fetchCurrentUser} error={error} />} 
+            element={<UserProfile currentUser={currentUser} loading={loading} fetchCurrentUser={fetchCurrentUser} error={error} />} 
           />
         </Routes>
       </div>

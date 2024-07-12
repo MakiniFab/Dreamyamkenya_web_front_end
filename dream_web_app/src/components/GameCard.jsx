@@ -1,96 +1,75 @@
 import { useState, useEffect } from 'react';
 import './components.css';
 
-function GameCard({ stake, visibleGameCard, setVisibleGameCard, updateStatus, setAmountStake, user }) {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchAllUsers = () => {
+function GameCard({currentUser, setVisibleGameCard, updateStatus, setAmountStake}){
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const token = localStorage.getItem('token');
-    if (!token || token.split('.').length !== 3) {
-      setError('Invalid token');
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    fetch('http://localhost:5000/users', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          throw new Error(data.error);
+        if (!token || token.split('.').length !== 3) {
+        setError('Invalid token');
+        setLoading(false);
+        return;
         }
 
-        const onlineUsers = Array.isArray(data.users)
-          ? data.users.filter((user) => user.status === 'online')
-          : [];
-
-        // Sort users such that users with the same stake as the selected stake appear at the top
-        const sortedUsers = onlineUsers.sort((a, b) => {
-          const isAStakeMatch = a.stake === stake;
-          const isBStakeMatch = b.stake === stake;
-
-          if (isAStakeMatch && !isBStakeMatch) return -1;
-          if (!isAStakeMatch && isBStakeMatch) return 1;
-
-          return 0;
+    const fetchAllUsers = () => {
+        setLoading(true);
+        fetch('http://localhost:5000/users', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            const onlineUsers = Array.isArray(data.users)
+            ? data.users.filter((user) => user.status === 'online')
+            : [];
+            setUsers(onlineUsers);
+            setLoading(false);
+        })
+        .catch((err) => {
+            setError(err.message);
+            setLoading(false);
         });
+    }
 
-        setUsers(onlineUsers);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  };
+    useEffect(() => {
+      fetchAllUsers();
+    }, []);
 
-  useEffect(() => {
-    fetchAllUsers();
-  }, []);
+    function combinedDuty() {
+      setVisibleGameCard(null);
+      updateStatus("offline");
+      setAmountStake(0); 
+    }
 
-
-  function combinedDuty() {
-    setVisibleGameCard(null);
-    updateStatus("offline");
-    setAmountStake(0); 
-  }
-
-  return (
-    <div className='gc__gameCard-container'>
-      <div className='gc__gameCard-loadingStatue'>
-        <button onClick={combinedDuty}>Back</button>
-        <h2>Game amount {stake}</h2>
-        <p>Pairing with opponent...</p>
-        <br />
-      </div>
-      <div className='gc__gameCard-waitingList'>
-        <p>Search for a friend?</p>
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>Error: {error}</p>
-        ) : users.length > 0 ? (
-          <ul>
+    return (
+      <div className='gc__gameCard-container' >
+        <div>
+          <button onClick={combinedDuty} >back</button>
+        </div>
+        <div className='gc__gameCard-waitingList'>
+          <p>Search for a friend?</p>
+          {loading ? (
+            <p>Loading...</p>
+            ) : error ? (
+            <p>Error: {error}</p>
+            ) : users.length > 0 ? (
+            <ul>
             {users.map((user) => (
-              <li key={user.id}>
-                {user.username || 'No username'} - Stake: {user.amount || 'Not specified'}
-              </li>
+            <li key={user.id}>
+            {user.username || 'No username'} - Stake: {user.amount || 'Not specified'}
+            </li>
             ))}
-          </ul>
-        ) : (
-          <p>No users available</p>
-        )}
+            </ul>
+            ) : (
+            <p>No users available</p>
+          )}
+            </div>
       </div>
-    </div>
-  );
+    )
 }
 
 export default GameCard;

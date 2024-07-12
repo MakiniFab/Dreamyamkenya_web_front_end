@@ -4,7 +4,7 @@ import Mpesa from './Mpesa';
 import './backendComponents.css';
 import GameCard from '../components/GameCard';
 
-const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
+const UserProfile = ({ fetchCurrentUser, currentUser, loading, error }) => {
   const [mpesaVisible, setMpesaVisible] = useState(false);
   const [visibleGameCard, setVisibleGameCard] = useState(null);
   const token = localStorage.getItem('token');
@@ -22,13 +22,13 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
   }
 
   const updateStatus = async (status) => {
-    if (!user || !user.id) {
-      console.error("User id not available");
+    if (!currentUser || !currentUser.id) {
+      console.error("currentUser id not available");
       return;
     }
 
     try {
-      await fetch(`http://localhost:5000/status/${user.id}`, {
+      await fetch(`http://localhost:5000/status/${currentUser.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -42,13 +42,13 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
   };
 
   const setAmountStake = async (amount) => {
-    if (!user || !user.id) {
-      console.error("User id not available");
+    if (!currentUser || !currentUser.id) {
+      console.error("currentUser id not available");
       return;
     }
 
     try {
-      await fetch(`http://localhost:5000/amount/${user.id}`, {
+      await fetch(`http://localhost:5000/amount/${currentUser.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -80,14 +80,14 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
             <p>Loading...</p>
           ) : error ? (
             <p>Error: {error}</p>
-          ) : user ? (
+          ) : currentUser ? (
             <div className='gc__profile-card-details'>
-              <p><strong>Username:</strong> {user.username}</p>
-              <p><strong>Phone Number:</strong> {user.phone_number}</p>
-              <p><strong>Balance:</strong> {user.balance}</p>
+              <p><strong>Username:</strong> {currentUser.username}</p>
+              <p><strong>Phone Number:</strong> {currentUser.phone_number}</p>
+              <p><strong>Balance:</strong> {currentUser.balance}</p>
             </div>
           ) : (
-            <p>No user data available</p>
+            <p>No currentUser data available</p>
           )}
         </div>
         <div className='gc__profile-mpesa'>
@@ -109,7 +109,7 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
             </div>
           ))
         ) : (
-          <GameCard user={user} visibleGameCard={visibleGameCard} setVisibleGameCard={setVisibleGameCard} 
+          <GameCard currentUser={currentUser} visibleGameCard={visibleGameCard} setVisibleGameCard={setVisibleGameCard} 
           updateStatus={updateStatus} setAmountStake={setAmountStake} />
         )}
       </div>
