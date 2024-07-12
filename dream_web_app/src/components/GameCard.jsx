@@ -26,7 +26,21 @@ function GameCard({currentUser, setVisibleGameCard, updateStatus, setAmountStake
             const onlineUsers = Array.isArray(data.users)
             ? data.users.filter((user) => user.status === 'online')
             : [];
-            setUsers(onlineUsers);
+            //find current user
+            const currentUserInList = onlineUsers.find((user) => user.id === currentUser.id)
+            const currentUserAmount = currentUserInList ? currentUserInList.amount : null
+
+            //sort
+            const sortedUsers = onlineUsers.sort((a, b)=> {
+              if (a.amount === currentUserAmount && b.amount !== currentUserAmount) {
+                return -1
+              } else if (a.amount !== currentUserAmount && b.amount === currentUserAmount) {
+                return 1
+              } else {
+                return 0
+              }
+            })
+            setUsers(sortedUsers);
             setLoading(false);
         })
         .catch((err) => {
