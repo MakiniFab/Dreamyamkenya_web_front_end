@@ -7,7 +7,12 @@ import GameCard from '../components/GameCard';
 const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
   const [mpesaVisible, setMpesaVisible] = useState(false);
   const [visibleGameCard, setVisibleGameCard] = useState(null);
-  
+  const token = localStorage.getItem('token');
+    if (!token || token.split('.').length !== 3) {
+      setError('Invalid token');
+      return;
+    }
+
   useEffect(() => {
     fetchCurrentUser();
   }, []);
@@ -16,25 +21,10 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
     setMpesaVisible(!mpesaVisible);
   }
 
-  function selectGameCard(stake) {
-    if (visibleGameCard === stake) {
-      setVisibleGameCard(null)
-    } else {
-      setVisibleGameCard(stake)
-      updateStatus("online")
-    }
-
-  }
-
   const updateStatus = async (status) => {
-    const token = localStorage.getItem('token');
-    if (!token || token.split('.').length !== 3) {
-      setError('Invalid token');
-      return;
-    }
     if (!user || !user.id) {
-      console.error("User id not available")
-      return
+      console.error("User id not available");
+      return;
     }
 
     try {
@@ -44,10 +34,40 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({status})
-      })
+        body: JSON.stringify({ status }),
+      });
     } catch (error) {
-      console.error("Error:", error)
+      console.error("Error:", error);
+    }
+  };
+
+  const setAmountStake = async (amount) => {
+    if (!user || !user.id) {
+      console.error("User id not available");
+      return;
+    }
+
+    try {
+      await fetch(`http://localhost:5000/amount/${user.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ amount }),
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  function selectGameCard(stake) {
+    if (visibleGameCard === stake) {
+      setVisibleGameCard(null);
+    } else {
+      setVisibleGameCard(stake);
+      updateStatus("online");
+      setAmountStake(stake); 
     }
   }
 
@@ -84,12 +104,13 @@ const UserProfile = ({ fetchCurrentUser, user, loading, error }) => {
       <div className='gc__profile-game-buttons'>
         {visibleGameCard === null ? (
           [20, 50, 100, 200, 300, 500, 1000].map(stake => (
-            <div key={stake} >
-              <button onClick={() => selectGameCard(stake)} >Game {stake}</button>
+            <div key={stake}>
+              <button onClick={() => selectGameCard(stake)}>Game {stake}</button>
             </div>
           ))
         ) : (
-          <GameCard user={user} selectGameCard={() => selectGameCard(visibleGameCard)} stake={visibleGameCard} />
+          <GameCard user={user} visibleGameCard={visibleGameCard} setVisibleGameCard={setVisibleGameCard} 
+          updateStatus={updateStatus} setAmountStake={setAmountStake} />
         )}
       </div>
     </div>

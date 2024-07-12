@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './components.css';
 
-function GameCard({ stake, selectGameCard, user }) {
+function GameCard({ stake, visibleGameCard, setVisibleGameCard, updateStatus, setAmountStake, user }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,7 +43,7 @@ function GameCard({ stake, selectGameCard, user }) {
           return 0;
         });
 
-        setUsers(sortedUsers);
+        setUsers(onlineUsers);
         setLoading(false);
       })
       .catch((err) => {
@@ -56,35 +56,11 @@ function GameCard({ stake, selectGameCard, user }) {
     fetchAllUsers();
   }, []);
 
-  const updateStatus = async (status) => {
-    const token = localStorage.getItem('token');
-    if (!token || token.split('.').length !== 3) {
-      setError('Invalid token');
-      return;
-    }
-    if (!user || !user.id) {
-      console.error("User id not available")
-      return
-    }
-
-    try {
-      await fetch(`http://localhost:5000/status/${user.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({status})
-      })
-    } catch (error) {
-      console.error("Error:", error)
-    }
-  }
 
   function combinedDuty() {
-    updateStatus("offline")
-    selectGameCard(null)
-
+    setVisibleGameCard(null);
+    updateStatus("offline");
+    setAmountStake(0); 
   }
 
   return (
@@ -96,11 +72,6 @@ function GameCard({ stake, selectGameCard, user }) {
         <br />
       </div>
       <div className='gc__gameCard-waitingList'>
-        {user && user.status === 'online' && (
-          <div className='gc__gameCard-user'>
-            <h3>Logged In User: {user.username}</h3>
-          </div>
-        )}
         <p>Search for a friend?</p>
         {loading ? (
           <p>Loading...</p>
@@ -110,7 +81,7 @@ function GameCard({ stake, selectGameCard, user }) {
           <ul>
             {users.map((user) => (
               <li key={user.id}>
-                {user.username || 'No username'} - Stake: {user.stake || 'Not specified'}
+                {user.username || 'No username'} - Stake: {user.amount || 'Not specified'}
               </li>
             ))}
           </ul>
