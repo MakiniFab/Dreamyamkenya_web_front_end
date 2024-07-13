@@ -21,20 +21,16 @@ const UserProfile = ({ fetchCurrentUser, currentUser, loading, error }) => {
     setMpesaVisible(!mpesaVisible);
   }
 
-  const updateStatus = async (status) => {
-    if (!currentUser || !currentUser.id) {
-      console.error("currentUser id not available");
-      return;
-    }
-
+  const updateStatus = async (currentUserId, status) => {
+    
     try {
-      await fetch(`http://localhost:5000/status/${currentUser.id}`, {
+      await fetch(`http://localhost:5000/status/${currentUserId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ currentUserId, status }),
       });
     } catch (error) {
       console.error("Error:", error);
@@ -62,11 +58,15 @@ const UserProfile = ({ fetchCurrentUser, currentUser, loading, error }) => {
   };
 
   function selectGameCard(stake) {
+    if (!currentUser || !currentUser.id) {
+      console.error("currentUser id not available");
+      return;
+    }
     if (visibleGameCard === stake) {
       setVisibleGameCard(null);
     } else {
       setVisibleGameCard(stake);
-      updateStatus("online");
+      updateStatus(currentUser.id, "online");
       setAmountStake(stake); 
     }
   }

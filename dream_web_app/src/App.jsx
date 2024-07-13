@@ -2,6 +2,7 @@ import { useState} from 'react';
 import { BrowserRouter as  Router, Routes, Route } from 'react-router-dom';
 import UserProfile from './backendComponents/UserProfile';
 import HomeBody from "./components/HomeBody";
+import Game from './components/Game';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -43,6 +44,7 @@ function App() {
             path="/profile" 
             element={<UserProfile currentUser={currentUser} loading={loading} fetchCurrentUser={fetchCurrentUser} error={error} />} 
           />
+          <Route path="/game" element={<Game />} />
         </Routes>
       </div>
   );

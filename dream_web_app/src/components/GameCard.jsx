@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import './components.css';
+import { useNavigate } from 'react-router-dom';
 
 function GameCard({currentUser, setVisibleGameCard, updateStatus, setAmountStake}){
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -42,6 +44,15 @@ function GameCard({currentUser, setVisibleGameCard, updateStatus, setAmountStake
             })
             setUsers(sortedUsers);
             setLoading(false);
+
+            const pairedUser = sortedUsers.find((user) => user.amount === currentUserAmount && user.id !== currentUser.id)
+            if (pairedUser) {
+              updateStatus(currentUser.id, "offline")
+              updateStatus(pairedUser.id, "offline")
+              navigate('/game')
+            } else {
+              console.log("unpaired")
+            }
         })
         .catch((err) => {
             setError(err.message);
@@ -55,7 +66,7 @@ function GameCard({currentUser, setVisibleGameCard, updateStatus, setAmountStake
 
     function combinedDuty() {
       setVisibleGameCard(null);
-      updateStatus("offline");
+      updateStatus(currentUser.id, "offline")
       setAmountStake(0); 
     }
 
