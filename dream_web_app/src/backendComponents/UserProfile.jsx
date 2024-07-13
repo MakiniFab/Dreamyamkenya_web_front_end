@@ -4,7 +4,7 @@ import Mpesa from './Mpesa';
 import './backendComponents.css';
 import GameCard from '../components/GameCard';
 
-const UserProfile = ({ fetchCurrentUser, currentUser, loading, error }) => {
+const UserProfile = ({ fetchCurrentUser, updateStatus, currentUser, loading, error }) => {
   const [mpesaVisible, setMpesaVisible] = useState(false);
   const [visibleGameCard, setVisibleGameCard] = useState(null);
   const token = localStorage.getItem('token');
@@ -20,22 +20,6 @@ const UserProfile = ({ fetchCurrentUser, currentUser, loading, error }) => {
   function showMpesa() {
     setMpesaVisible(!mpesaVisible);
   }
-
-  const updateStatus = async (currentUserId, status) => {
-    
-    try {
-      await fetch(`http://localhost:5000/status/${currentUserId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ currentUserId, status }),
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
 
   const setAmountStake = async (amount) => {
     if (!currentUser || !currentUser.id) {
@@ -97,7 +81,7 @@ const UserProfile = ({ fetchCurrentUser, currentUser, loading, error }) => {
             </button>
           </div>
           {mpesaVisible && (
-            <Mpesa />
+            <Mpesa fetchCurrentUser={fetchCurrentUser} currentUser={currentUser}/>
           )}
         </div>
       </div>

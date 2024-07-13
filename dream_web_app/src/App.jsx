@@ -8,9 +8,9 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem('token');
 
   const fetchCurrentUser = () => {
-    const token = localStorage.getItem('token');
     if (!token || token.split('.').length !== 3) {
       setError('Invalid token');
       setLoading(false);
@@ -35,6 +35,23 @@ function App() {
         setLoading(false);
       });
   };
+  
+  const updateStatus = async (currentUserId, status) => {
+    
+    try {
+      await fetch(`http://localhost:5000/status/${currentUserId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentUserId, status }),
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
 
   return (
       <div>
@@ -42,9 +59,10 @@ function App() {
           <Route path="/" element={<HomeBody />} />
           <Route 
             path="/profile" 
-            element={<UserProfile currentUser={currentUser} loading={loading} fetchCurrentUser={fetchCurrentUser} error={error} />} 
+            element={<UserProfile currentUser={currentUser} loading={loading} fetchCurrentUser={fetchCurrentUser}
+            updateStatus={updateStatus} error={error} />} 
           />
-          <Route path="/game" element={<Game />} />
+          <Route path="/game" element={<Game currentUser={currentUser} updateStatus={updateStatus} />} />
         </Routes>
       </div>
   );

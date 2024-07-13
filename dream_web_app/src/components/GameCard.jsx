@@ -49,7 +49,7 @@ function GameCard({currentUser, setVisibleGameCard, updateStatus, setAmountStake
             if (pairedUser) {
               updateStatus(currentUser.id, "offline")
               updateStatus(pairedUser.id, "offline")
-              navigate('/game')
+              navigate('/game', {state: {pairedUser}})
             } else {
               console.log("unpaired")
             }
@@ -62,7 +62,7 @@ function GameCard({currentUser, setVisibleGameCard, updateStatus, setAmountStake
 
     useEffect(() => {
       fetchAllUsers();
-    }, []);
+    }, [currentUser, token, navigate, updateStatus]);
 
     function combinedDuty() {
       setVisibleGameCard(null);
