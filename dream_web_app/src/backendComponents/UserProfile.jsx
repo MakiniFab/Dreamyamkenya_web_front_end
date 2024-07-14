@@ -4,7 +4,7 @@ import Mpesa from './Mpesa';
 import './backendComponents.css';
 import GameCard from '../components/GameCard';
 
-const UserProfile = ({ fetchCurrentUser, updateStatus, currentUser, loading, error }) => {
+const UserProfile = ({ fetchCurrentUser, updateStatus, updateBalance, updateAmount,  currentUser, loading, error }) => {
   const [mpesaVisible, setMpesaVisible] = useState(false);
   const [visibleGameCard, setVisibleGameCard] = useState(null);
   const token = localStorage.getItem('token');
@@ -21,37 +21,12 @@ const UserProfile = ({ fetchCurrentUser, updateStatus, currentUser, loading, err
     setMpesaVisible(!mpesaVisible);
   }
 
-  const setAmountStake = async (amount) => {
-    if (!currentUser || !currentUser.id) {
-      console.error("currentUser id not available");
-      return;
-    }
-
-    try {
-      await fetch(`http://localhost:5000/amount/${currentUser.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ amount }),
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   function selectGameCard(stake) {
-    if (!currentUser || !currentUser.id) {
-      console.error("currentUser id not available");
-      return;
-    }
     if (visibleGameCard === stake) {
       setVisibleGameCard(null);
     } else {
       setVisibleGameCard(stake);
-      updateStatus(currentUser.id, "online");
-      setAmountStake(stake); 
+      updateStatus(currentUser.id, "online"); 
     }
   }
 
@@ -59,7 +34,7 @@ const UserProfile = ({ fetchCurrentUser, updateStatus, currentUser, loading, err
     <div className='gc__profile-container'>
       <div className='gc__profile-container-top'>
         <div className='gc__profile-card'>
-          <h2>Current User Details</h2>
+          <h2>My profile</h2>
           {loading ? (
             <p>Loading...</p>
           ) : error ? (
@@ -81,7 +56,7 @@ const UserProfile = ({ fetchCurrentUser, updateStatus, currentUser, loading, err
             </button>
           </div>
           {mpesaVisible && (
-            <Mpesa fetchCurrentUser={fetchCurrentUser} currentUser={currentUser}/>
+            <Mpesa  updateBalance={updateBalance} currentUser={currentUser}/>
           )}
         </div>
       </div>
@@ -94,7 +69,7 @@ const UserProfile = ({ fetchCurrentUser, updateStatus, currentUser, loading, err
           ))
         ) : (
           <GameCard currentUser={currentUser} visibleGameCard={visibleGameCard} setVisibleGameCard={setVisibleGameCard} 
-          updateStatus={updateStatus} setAmountStake={setAmountStake} />
+          updateStatus={updateStatus} updateBalance={updateBalance} stake={stake} updateAmount={updateAmount} />
         )}
       </div>
     </div>

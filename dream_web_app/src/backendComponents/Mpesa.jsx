@@ -1,43 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-function Mpesa({currentUser, fetchCurrentUser}) {
-    const [balance, setBalance] = useState(0)
+function Mpesa({currentUser, updateBalance}) {
     const [amount, setAmount] = useState('');
-    const token = localStorage.getItem('token');
 
     const handleDeposit = () => {
         const newBalance = currentUser.balance + parseFloat(amount)
-        updateBalance(newBalance)
+        updateBalance(currentUser.id, newBalance)
+        setAmount('')
     }
 
     const handleWithdraw = () => {
-        const newBalance = currentUser.balance - parseFloat(amount)
-        updateBalance(newBalance)
-    }
-
-    const updateBalance =(newBalance) => {
-        fetch(`http://localhost:5000/balance/${currentUser.id}`, {
-            method: 'PATCH',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-                },
-            body: JSON.stringify({balance: newBalance})
-        })
-        .then(response => response.json())
-        .then(data => {
-            setBalance(data.balance)
-            setAmount('')
-        })
-        .catch(error => {
-            console.error("error fetchong balance")
-        })
+        if (currentUser.balance >= amount) {
+            const newBalance = currentUser.balance - parseFloat(amount)
+        updateBalance(currentUser.id, newBalance)
+        setAmount('')
+        } else {
+            console.log("withdraw less")
+        } 
     }
 
     return (
         <div>
             <div>
-                <p>Current Balance: </p>
                 <p>{currentUser.balance}</p>
             </div>
             <div>

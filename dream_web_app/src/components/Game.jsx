@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-function Game({currentUser, updateStatus}) {
+function Game({currentUser, fetchCurrentUser, updateWins}) {
     const location = useLocation();
+    const navigate = useNavigate();
     const pairedUser = location.state ?.pairedUser;
     const [firstClicker, setFirstClicker] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -11,11 +12,11 @@ function Game({currentUser, updateStatus}) {
       if (loading || firstClicker) return;
       setLoading(true)
 
-      updateStatus(currentUser.id, "firstClicker")
-      updateStatus(pairedUser.id, "lastClicker")
-
+      updateWins(currentUser.id, "0o0")
+      updateWins(pairedUser.id, "0o0")
       setFirstClicker(currentUser)
       setLoading(false)
+      fetchCurrentUser();
     }
 
   return (
@@ -27,6 +28,13 @@ function Game({currentUser, updateStatus}) {
           {firstClicker ? `First clicker: $ {firstClicker.username}` :
            'Click me'}
         </button>
+      </div>
+      <div>
+        <p>{currentUser.username}</p>
+        <p>{currentUser.balance}</p>
+        <p>{currentUser.wins}</p>
+        <p>{currentUser.status}</p>
+        <p>{currentUser.amount}</p>
       </div>
     </div>
   )

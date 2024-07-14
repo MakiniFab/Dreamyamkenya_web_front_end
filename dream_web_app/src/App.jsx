@@ -52,17 +52,46 @@ function App() {
     }
   };
 
+  const updateBalance = async (currentUserId, balance) => {
+    try {
+      await fetch(`http://localhost:5000/balance/${currentUserId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentUserId, balance }),
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const updateAmount = async (currentUserId, amount) => {
+    try {
+      await fetch(`http://localhost:5000/amount/${currentUserId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentUserId, amount }),
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
       <div>
         <Routes>
           <Route path="/" element={<HomeBody />} />
-          <Route 
-            path="/profile" 
+          <Route path="/profile" 
             element={<UserProfile currentUser={currentUser} loading={loading} fetchCurrentUser={fetchCurrentUser}
-            updateStatus={updateStatus} error={error} />} 
+            updateStatus={updateStatus} updateBalance={updateBalance} error={error} updateAmount={updateAmount} />} 
           />
-          <Route path="/game" element={<Game currentUser={currentUser} updateStatus={updateStatus} />} />
+          {/* <Route path="/game" element={<Game currentUser={currentUser} updateStatus={updateStatus}
+            updateWins={updateWins} fetchCurrentUser={fetchCurrentUser} />} /> */}
         </Routes>
       </div>
   );
