@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './components.css';
 import { useNavigate } from 'react-router-dom';
 
-function GameCard({currentUser, fetchCurrentUser, updateStatus, updateBalance, updateAmount}){
+function GameCard({currentUser, fetchCurrentUser, updateStatus, updateBalance, updateAmount, setVisibleGameCard}){
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -76,6 +76,7 @@ function GameCard({currentUser, fetchCurrentUser, updateStatus, updateBalance, u
     function combinedDuty() {
       updateStatus(currentUser.id, "offline")
       updateAmount(currentUser.id, 0)
+      setVisibleGameCard(null)
     }
 
     return (

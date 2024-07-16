@@ -7,21 +7,24 @@ import GameCard from '../components/GameCard';
 const UserProfile = ({ fetchCurrentUser, updateBalance, updateStatus, currentUser, loading, error }) => {
   const [mpesaVisible, setMpesaVisible] = useState(false);
   const [visiblegameCard, setVisibleGameCard] = useState(null);
+  const [stakeSelected, setStakeSelected] = useState(false);
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     fetchCurrentUser();
   }, []);
 
   useEffect(() => {
-    if (currentUser.wins === "0o0") {
-      setVisibleGameCard(null)
-    } else if (currentUser.wins === "0o1" || currentUser.wins === "1o1"){
-      setVisibleGameCard(currentUser.amount)
-      updateStatus(currentUser.id, "online")
-      updateAmount(currentUser.id, stake)
+    if (!stakeSelected && currentUser) {
+      if (currentUser.wins === "0o0") {
+        setVisibleGameCard(null)
+      } else if (currentUser.wins === "0o1" || currentUser.wins === "1o1"){
+        setVisibleGameCard(currentUser.amount)
+        updateStatus(currentUser.id, "online")
+      }
     }
-  }, [currentUser])
+  }, [currentUser, stakeSelected])
 
   const updateAmount = async (currentUserId, amount) => {
     try {
@@ -43,6 +46,7 @@ const UserProfile = ({ fetchCurrentUser, updateBalance, updateStatus, currentUse
   }
 
   function selectGameCard(stake) {
+    setStakeSelected(true)
     if (visiblegameCard === stake) {
       setVisibleGameCard(null)
     } else {
@@ -92,7 +96,8 @@ const UserProfile = ({ fetchCurrentUser, updateBalance, updateStatus, currentUse
           ) : 
           (
             <GameCard currentUser={currentUser} fetchCurrentUser={fetchCurrentUser}  
-            updateStatus={updateStatus} updateBalance={updateBalance} updateAmount={updateAmount} />
+            updateStatus={updateStatus} updateBalance={updateBalance} updateAmount={updateAmount} 
+            setVisibleGameCard={setVisibleGameCard} />
           )}
         </div>
       </div>

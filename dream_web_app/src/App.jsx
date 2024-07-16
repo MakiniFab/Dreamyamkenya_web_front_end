@@ -74,7 +74,7 @@ function App() {
           <Route path="/profile" element={<UserProfile currentUser={currentUser} loading={loading} fetchCurrentUser={fetchCurrentUser}
             updateStatus={updateStatus} updateBalance={updateBalance} error={error} />} />
           <Route path="/game" element={<Game currentUser={currentUser}
-           fetchCurrentUser={fetchCurrentUser} />} />
+           fetchCurrentUser={fetchCurrentUser} updateBalance={updateBalance} updateStatus={updateStatus} />} />
         </Routes>
       </div>
   );

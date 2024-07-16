@@ -1,64 +1,61 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-function Game({currentUser, fetchCurrentUser}) {
-    const location = useLocation();
+function Game({currentUser, fetchCurrentUser, updateStatus, updateBalance}) {
     const navigate = useNavigate();
-    const pairedUser = location.state ?.pairedUser;
-    const [firstClicker, setFirstClicker] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const token = localStorage.getItem('token');
+    const location = useLocation();
+    const pairedUser = location.state.pairedUser;
+    const [clickedBy, setClickedBy] = useState(null);
+    const [buttonDisabled, setButtonDisabled] = useState(false);
 
     useEffect(() => {
       fetchCurrentUser();
     }, []);
 
-    //function to update wins of a user
-  const updateWins = async (currentUserId, wins) => {
-    try {
-      await fetch(`http://localhost:5000/wins/${currentUserId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ currentUserId, wins }),
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-    
-    const handleClick = () => {
-      if (loading || firstClicker) return;
-      setLoading(true)
+    function handleClick(userId) {
+      if (!clickedBy) {
+        setClickedBy(userId)
+        setButtonDisabled(true)
 
-      setFirstClicker(currentUser)
-      updateWins(currentUser.id, "1o1")
-      updateWins(pairedUser.id, "0o1")
-      navigate('/profile')
-      setLoading(false)
+        const winStatus = userId === currentUser.id ? 1 : 0;
+        updateWins(userId, winStatus)
+      }
     }
 
-  return (
-    <div>
+    const updateWins = async (userId, winStatus) => {
+      const token = localStorage.getItem('token')
+      try {
+        await fetch(`http://localhost:5000/wins/${userId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ wins: winStatus }),
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    useEffect(() => {
+      if (clickedBy) (
+        console.log(`User ${clickedBy} clicked first`)
+      )
+    }, [clickedBy])
+
+    return (
       <div>
-        <h2>CaptaiN</h2>
-        <p>paired with: {pairedUser.username}</p>
-        <button onClick={handleClick}  disabled={!!firstClicker || loading}>
-          {firstClicker ? `First clicker: $ {firstClicker.username}` :
-           'Click me'}
-        </button>
+        <h2>Game</h2>
+        {clickedBy ? (
+          <p>{clickedBy === currentUser.id ? "you clicked first" : `${pairedUser.username} clicked first`}</p>
+        ) : (
+          <div>
+            <button onClick={() => handleClick(currentUser.id)} disabled={buttonDisabled} >click me</button>
+          </div>
+        )}
       </div>
-      <div>
-        <p>{currentUser.username}</p>
-        <p>{currentUser.balance}</p>
-        <p>{currentUser.wins}</p>
-        <p>{currentUser.status}</p>
-        <p>{currentUser.amount}</p>
-      </div>
-    </div>
-  )
+    )
 }
 
 export default Game;
