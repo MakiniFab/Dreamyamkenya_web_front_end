@@ -12,8 +12,8 @@ function Mpesa({currentUser, updateBalance}) {
     const handleWithdraw = () => {
         if (currentUser.balance >= amount) {
             const newBalance = currentUser.balance - parseFloat(amount)
-        updateBalance(currentUser.id, newBalance)
-        setAmount('')
+            updateBalance(currentUser.id, newBalance)
+            setAmount('')
         } else {
             console.log("withdraw less")
         } 

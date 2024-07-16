@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import './components.css';
 import { useNavigate } from 'react-router-dom';
 
-function GameCard({currentUser, setVisibleGameCard, updateStatus, updateBalance, updateAmount}){
+function GameCard({currentUser, fetchCurrentUser, updateStatus, updateBalance, updateAmount}){
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const token = localStorage.getItem('token');
 
-    console.log(stake)
+    useEffect(() => {
+      fetchCurrentUser();
+    }, []);
 
     const fetchAllUsers = () => {
         setLoading(true);
@@ -39,14 +41,17 @@ function GameCard({currentUser, setVisibleGameCard, updateStatus, updateBalance,
                 return 0
               }
             })
-            setUsers(sortedUsers);
+            setUsers(onlineUsers);
             setLoading(false);
 
             const pairedUser = sortedUsers.find((user) => user.amount === currentUserAmount && user.id !== currentUser.id)
             if (pairedUser) {
               updateStatus(currentUser.id, "offline")
               updateStatus(pairedUser.id, "offline")
-              
+              const newBalance = currentUser.balance - parseFloat(visibleGameCard)
+              const pairBalance = pairedUser.balance - parseFloat(visibleGameCard)
+              updateBalance(currentUser.id, newBalance)
+              updateBalance(pairedUser.id, pairBalance)
               navigate('/game', {state: {pairedUser}})
             } else {
               console.log("unpaired")
@@ -60,17 +65,17 @@ function GameCard({currentUser, setVisibleGameCard, updateStatus, updateBalance,
 
     useEffect(() => {
       fetchAllUsers();
-    }, [currentUser, token, navigate, updateStatus]);
+    }, [currentUser, token, navigate, updateStatus, updateBalance]);
 
     function combinedDuty() {
-      setVisibleGameCard(null);
       updateStatus(currentUser.id, "offline")
+      updateAmount(currentUser.id, 0)
     }
 
     return (
       <div className='gc__gameCard-container' >
         <div>
-          <button onClick={combinedDuty} >back</button>
+            <button onClick={combinedDuty} >back</button>
         </div>
         <div className='gc__gameCard-waitingList'>
           <p>Search for a friend?</p>
@@ -82,7 +87,7 @@ function GameCard({currentUser, setVisibleGameCard, updateStatus, updateBalance,
             <ul>
             {users.map((user) => (
             <li key={user.id}>
-            {user.username || 'No username'} - Stake: {user.amount || 'Not specified'}
+            {user.username || 'No username'} - Stake: {currentUser.amount || 'Not specified'}
             </li>
             ))}
             </ul>
