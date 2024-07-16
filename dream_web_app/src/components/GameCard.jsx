@@ -30,6 +30,7 @@ function GameCard({currentUser, fetchCurrentUser, updateStatus, updateBalance, u
             //find current user
             const currentUserInList = onlineUsers.find((user) => user.id === currentUser.id)
             const currentUserAmount = currentUserInList ? currentUserInList.amount : null
+            const currentUserWins = currentUserInList ? currentUserInList.wins : null
 
             //sort
             const sortedUsers = onlineUsers.sort((a, b)=> {
@@ -37,19 +38,24 @@ function GameCard({currentUser, fetchCurrentUser, updateStatus, updateBalance, u
                 return -1
               } else if (a.amount !== currentUserAmount && b.amount === currentUserAmount) {
                 return 1
+              } else if (a.wins === currentUserWins && b.wins !== currentUserWins) {
+                return -1
+              } else if (a.wins !== currentUserWins && b.wins === currentUserWins) {
+                return 1
               } else {
                 return 0
               }
             })
-            setUsers(onlineUsers);
+            setUsers(sortedUsers);
             setLoading(false);
 
-            const pairedUser = sortedUsers.find((user) => user.amount === currentUserAmount && user.id !== currentUser.id)
+            const pairedUser = sortedUsers.find((user) => user.amount === currentUserAmount && 
+            user.wins === currentUserWins && user.id !== currentUser.id)
             if (pairedUser) {
               updateStatus(currentUser.id, "offline")
               updateStatus(pairedUser.id, "offline")
-              const newBalance = currentUser.balance - parseFloat(visibleGameCard)
-              const pairBalance = pairedUser.balance - parseFloat(visibleGameCard)
+              const newBalance = currentUser.balance - parseFloat(currentUserAmount)
+              const pairBalance = pairedUser.balance - parseFloat(currentUserAmount)
               updateBalance(currentUser.id, newBalance)
               updateBalance(pairedUser.id, pairBalance)
               navigate('/game', {state: {pairedUser}})
